@@ -59,14 +59,14 @@ labels = [
 main_df.loc[:, "price_bin"] = pd.cut(
     main_df["price"], bins=bins, labels=labels, right=False
 )
-main_df = (
+corr_main_df = (
     main_df.groupby("price_bin", observed=False)
     .agg({"product_id": "nunique", "order_item_id": "count", "price": "mean"})
     .reset_index()
 )
 
 plt.figure(figsize=(12, 6))
-sns.barplot(x="price_bin", y="order_item_id", data=main_df, palette="Blues_r")
+sns.barplot(x="price_bin", y="order_item_id", data=corr_main_df, palette="Blues_r")
 plt.title("Volume Penjualan Berdasarkan Rentang Harga (BRL)", fontsize=14)
 plt.xlabel("Rentang Harga (BRL)", fontsize=12)
 plt.ylabel("Jumlah Produk Terjual", fontsize=12)
@@ -74,7 +74,7 @@ plt.xticks(rotation=45)
 st.pyplot(plt.gcf())
 
 plt.figure(figsize=(6, 4))
-corr_matrix = main_df[["order_item_id", "price"]].corr()
+corr_matrix = corr_main_df[["order_item_id", "price"]].corr()
 sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
 plt.title("Heatmap Korelasi antara Harga barang dan jumlah terjualnya barang")
 st.pyplot(plt.gcf())
@@ -98,9 +98,9 @@ geo_group = geolocation_df.groupby(
     by="geolocation_zip_code_prefix", as_index=False
 ).min()
 
-main_df = main_df.merge(br_info, how="left", left_on="customer_state", right_on="sigla")
+map_df = main_df.merge(br_info, how="left", left_on="customer_state", right_on="sigla")
 
-main_df = main_df.merge(
+map_df = map_df.merge(
     geo_group,
     how="left",
     left_on="customer_zip_code_prefix",
@@ -110,16 +110,16 @@ main_df = main_df.merge(
 valid_latitude_range = (-33.75, 5.3)
 valid_longitude_range = (-73.98, -34.79)
 
-main_df = main_df[
-    (main_df["geolocation_lat"] >= valid_latitude_range[0])
-    & (main_df["geolocation_lat"] <= valid_latitude_range[1])
-    & (main_df["geolocation_lng"] >= valid_longitude_range[0])
-    & (main_df["geolocation_lng"] <= valid_longitude_range[1])
+map_df = map_df[
+    (map_df["geolocation_lat"] >= valid_latitude_range[0])
+    & (map_df["geolocation_lat"] <= valid_latitude_range[1])
+    & (map_df["geolocation_lng"] >= valid_longitude_range[0])
+    & (map_df["geolocation_lng"] <= valid_longitude_range[1])
 ]
 
-main_df.drop_duplicates(inplace=True)
-lats = list(main_df["geolocation_lat"].dropna().values)
-longs = list(main_df["geolocation_lng"].dropna().values)
+map_df.drop_duplicates(inplace=True)
+lats = list(map_df["geolocation_lat"].dropna().values)
+longs = list(map_df["geolocation_lng"].dropna().values)
 locations = list(zip(lats, longs))
 map1 = folium.Map(location=[-15, -50], zoom_start=4.0)
 FastMarkerCluster(data=locations).add_to(map1)
