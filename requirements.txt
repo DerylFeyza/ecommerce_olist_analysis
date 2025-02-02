@@ -1,8 +1,7 @@
-folium
-matplotlib
-pandas
-Requests
-seaborn
-streamlit
-streamlit_folium
-numpy
+folium==0.19.4
+matplotlib==3.10.0
+pandas==2.2.3
+seaborn==0.13.2
+streamlit==1.41.1
+streamlit_folium==0.24.0
+numpy==2.2.2
