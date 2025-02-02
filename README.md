@@ -36,7 +36,7 @@ pip install -r requirements.txt
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/DerylFeyza/ecommerce_olist_analysis.git
+git clone https://github.com/DerylFeyza/ecommmerce_olist_analysis.git
 cd air-quality-analysis
 ```
 
