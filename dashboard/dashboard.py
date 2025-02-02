@@ -12,9 +12,9 @@ sns.set_theme(style="dark")
 
 combined_df = pd.read_csv("./data/combined_df.csv")
 geolocation_df = pd.read_csv("./data/geolocation_dataset.csv")
-
-min_date = combined_df["order_approved_at"].min()
-max_date = combined_df["order_approved_at"].max()
+combined_df["order_approved_at"] = pd.to_datetime(combined_df["order_approved_at"])
+min_date = combined_df["order_approved_at"].min().date()
+max_date = combined_df["order_approved_at"].max().date()
 
 with st.sidebar:
     start_date, end_date = st.date_input(
